@@ -103,8 +103,6 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
         return ButtonsConfig.BookmarksConfig.TOGGLE_BOOKMARK_BUTTON.slotIndex;
     }
 
-    @Getter
-    private transient ItemStack replacementItem;
 
     public Bookmarks() {
         super();
@@ -121,11 +119,9 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
         }
 
         String currentItemName = findItemNameFromContainer();
-
         current = findMatchingBookmark(currentItemName);
-        buildReplacementItem();
 
-        event.setReplacement(replacementItem);
+        event.setReplacement(getReplacementItem());
     }
 
     @EventHandler
@@ -139,24 +135,25 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
         toggleBookmark();
     }
 
-    private void buildReplacementItem() {
+    @Override
+    public ItemStack getReplacementItem(int size) {
         boolean bookmarked = current.isPresent();
 
-        this.replacementItem = new ItemStack(
-                bookmarked ? Items.RED_STAINED_GLASS_PANE : Items.GREEN_STAINED_GLASS_PANE
-        );
+        ItemStack stack = ItemButton.super.getReplacementItem(size);
 
-        replacementItem.set(
+        stack.set(
                 DataComponentTypes.CUSTOM_NAME,
                 Text.literal(bookmarked
                         ? "Remove " + current.get().name() + " Bookmarks"
-                        : "Bookmarks " + findItemNameFromContainer())
+                        : "Bookmark " + findItemNameFromContainer())
         );
 
-        replacementItem.set(
+        stack.set(
                 BazaarUtils.CUSTOM_SIZE_COMPONENT,
                 bookmarked ? "⃠ " : "★"
         );
+
+        return stack;
     }
 
     private void toggleBookmark() {
@@ -174,8 +171,6 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
 
             current = Optional.of(newBookmark);
         }
-
-        buildReplacementItem();
 
         saveBookmarks();
     }

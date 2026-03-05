@@ -70,9 +70,6 @@ public class SellOfferPriceHelper extends SignInputHelper.TransactionCost {
         };
     }
 
-    @Override
-    public ItemStack getReplacementItem() {
-        return new ItemStack(this::getButtonItem, 1);
     }
 
     @Override
