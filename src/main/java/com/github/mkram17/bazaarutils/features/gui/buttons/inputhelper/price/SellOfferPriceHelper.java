@@ -47,7 +47,9 @@ public class SellOfferPriceHelper extends SignInputHelper.TransactionCost {
             value = "The container slot where the button will be registered at",
             translation = "bazaarutils.config.buttons.button.container.slot_index.hint"
     )
+    @ContainerSlot(rows = 4, cols = 9, provider = "bazaar:sell_offer_price")
     @ConfigOption.Range(min = 0, max = 35)
+    @ConfigOption.Renderer("bazaarutils:slot")
     public int slotIndex;
 
     @ConfigEntry(
