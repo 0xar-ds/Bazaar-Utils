@@ -7,7 +7,6 @@ import com.github.mkram17.bazaarutils.features.gui.buttons.inputhelper.amount.Se
 import com.github.mkram17.bazaarutils.features.gui.buttons.inputhelper.price.BuyOrderPriceHelper;
 import com.github.mkram17.bazaarutils.features.gui.buttons.inputhelper.price.FlipOrderPriceHelper;
 import com.github.mkram17.bazaarutils.features.gui.buttons.inputhelper.price.SellOfferPriceHelper;
-import com.github.mkram17.bazaarutils.features.gui.inventory.restrictsell.controls.SellRestrictionControl;
 import com.github.mkram17.bazaarutils.utils.bazaar.SignInputHelper;
 import com.github.mkram17.bazaarutils.utils.bazaar.market.price.PricingPosition;
 import com.teamresourceful.resourcefulconfig.api.annotations.*;
@@ -373,6 +372,18 @@ public final class ButtonsConfig {
                 translation = "bazaarutils.config.buttons.button.container.enabled.hint"
         )
         public boolean enabled;
+
+        @Getter
+        @ConfigEntry(
+                id = "item_id",
+                translation = "bazaarutils.config.buttons.button.container.item_id.label"
+        )
+        @Comment(
+                value = "The item that will be placed as the button.",
+                translation = "bazaarutils.config.buttons.button.container.item_id.hint"
+        )
+        @ConfigOption.Renderer("bazaarutils:item")
+        public String itemId = "minecraft:green_stained_glass_pane";
 
         @Getter
         @ConfigEntry(
