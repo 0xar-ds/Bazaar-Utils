@@ -99,8 +99,8 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
     }
 
     @Override
-    public int getSlotNumber() {
-        return ButtonsConfig.BookmarksConfig.TOGGLE_BOOKMARK_BUTTON.slotNumber;
+    public int getSlotIndex() {
+        return ButtonsConfig.BookmarksConfig.TOGGLE_BOOKMARK_BUTTON.slotIndex;
     }
 
     @Getter
