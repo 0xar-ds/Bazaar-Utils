@@ -126,7 +126,7 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
 
     @EventHandler
     private void onClick(SlotClickEvent event) {
-        if (!isRegistryEnabled() || !wasButtonSlotClicked(event) || !inCorrectScreen()) {
+        if (!isRegistryEnabled() || !wasButtonClicked(event) || !inCorrectScreen()) {
             return;
         }
 
