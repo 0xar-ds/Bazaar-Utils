@@ -18,12 +18,12 @@ import com.github.mkram17.bazaarutils.utils.minecraft.ItemButton;
 import com.github.mkram17.bazaarutils.ui.widgets.ItemSlotButtonWidget;
 import com.github.mkram17.bazaarutils.utils.*;
 import com.github.mkram17.bazaarutils.utils.annotations.modules.Module;
-import com.github.mkram17.bazaarutils.utils.bazaar.market.order.OrderInfo;
-import com.github.mkram17.bazaarutils.utils.bazaar.market.order.OrderType;
 import com.github.mkram17.bazaarutils.utils.bazaar.market.price.PricingPosition;
 import com.github.mkram17.bazaarutils.utils.minecraft.gui.ScreenManager;
 import com.github.mkram17.bazaarutils.utils.minecraft.gui.container.ContainerManager;
 import com.github.mkram17.bazaarutils.utils.minecraft.gui.sign.SignManager;
+import com.github.mkram17.bazaarutils.utils.minecraft.item.ItemGroups;
+import com.github.mkram17.bazaarutils.utils.minecraft.item.ItemRef;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import meteordevelopment.orbit.EventHandler;
@@ -32,7 +32,6 @@ import net.minecraft.client.gui.screen.ButtonTextures;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.MutableText;
@@ -103,6 +102,10 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
         return ButtonsConfig.BookmarksConfig.TOGGLE_BOOKMARK_BUTTON.slotIndex;
     }
 
+    @Override
+    public ItemRef getItemRef() {
+        return ItemRef.of(ItemRef.of(ButtonsConfig.BookmarksConfig.TOGGLE_BOOKMARK_BUTTON::getItemId), current::isEmpty, ItemGroups.BOOKMARKED_STATE_GROUP);
+    }
 
     public Bookmarks() {
         super();

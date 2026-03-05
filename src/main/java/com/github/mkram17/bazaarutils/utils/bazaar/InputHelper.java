@@ -22,8 +22,6 @@ public abstract class InputHelper<T> implements BUToggleableFeature, ItemButton 
     @Getter
     protected String name;
 
-    protected abstract Item getButtonItem();
-
     public enum MarketType {
         INSTANT {
             @Override
