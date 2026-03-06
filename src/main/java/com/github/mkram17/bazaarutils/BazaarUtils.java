@@ -50,6 +50,7 @@ public class BazaarUtils implements ClientModInitializer {
 
     public static ComponentType<String> CUSTOM_SIZE_COMPONENT;
     public static ComponentType<Boolean> CUSTOM_SHOWPRICECHART_COMPONENT;
+    public static ComponentType<Boolean> CUSTOM_SLOT_SELECTOR_LOCKED_COMPONENT;
 
     @Override
     public void onInitializeClient() {
@@ -80,6 +81,12 @@ public class BazaarUtils implements ClientModInitializer {
         CUSTOM_SHOWPRICECHART_COMPONENT = Registry.register(
                 Registries.DATA_COMPONENT_TYPE,
                 Identifier.of(BazaarUtils.MOD_ID, "has_price_chart"),
+                ComponentType.<Boolean>builder().codec(Codec.BOOL).build()
+        );
+
+        CUSTOM_SLOT_SELECTOR_LOCKED_COMPONENT = Registry.register(
+                Registries.DATA_COMPONENT_TYPE,
+                Identifier.of(BazaarUtils.MOD_ID, "slot_picker_locked"),
                 ComponentType.<Boolean>builder().codec(Codec.BOOL).build()
         );
     }

@@ -1,5 +1,6 @@
 package com.github.mkram17.bazaarutils.config.util.client.components.options.types.selector;
 
+import com.github.mkram17.bazaarutils.BazaarUtils;
 import com.teamresourceful.resourcefulconfig.client.components.base.BaseWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
@@ -28,6 +29,7 @@ public class ContainerCell extends BaseWidget {
         setPosition(x, y);
         this.stack    = stack;
         this.selected = selected;
+        this.active   = !(!stack.isEmpty() && stack.contains(BazaarUtils.CUSTOM_SLOT_SELECTOR_LOCKED_COMPONENT));
         this.onSelect = onSelect;
     }
 
