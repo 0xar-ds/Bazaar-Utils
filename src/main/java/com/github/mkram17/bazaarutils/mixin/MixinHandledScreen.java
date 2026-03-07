@@ -4,12 +4,16 @@ package com.github.mkram17.bazaarutils.mixin;
 import com.github.mkram17.bazaarutils.BazaarUtils;
 import com.github.mkram17.bazaarutils.config.util.ConfigUtil;
 import com.github.mkram17.bazaarutils.events.SlotClickEvent;
+import com.github.mkram17.bazaarutils.features.gui.inventory.LastVisitedPages;
 import com.github.mkram17.bazaarutils.features.gui.inventory.OrderStatusHighlight;
 import com.github.mkram17.bazaarutils.generated.BazaarUtilsModules;
 import com.github.mkram17.bazaarutils.misc.SlotHighlightCache;
+import com.github.mkram17.bazaarutils.utils.bazaar.data.BazaarDataManager;
 import com.github.mkram17.bazaarutils.utils.bazaar.gui.BazaarScreens;
+import com.github.mkram17.bazaarutils.utils.bazaar.market.order.OrderInfo;
 import com.github.mkram17.bazaarutils.utils.minecraft.gui.ScreenManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -24,6 +28,9 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
+import java.util.Optional;
 
 //used for SlotClickEvent, register keybinds in chests, block slot clicks, highlighting slots
 @Mixin(value = HandledScreen.class, priority = 999)
@@ -70,33 +77,48 @@ public abstract class MixinHandledScreen extends Screen {
 	}
 
 	@Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/item/ItemStack;III)V"))
-	private void drawOnItem_OrderStatusHighlight(DrawContext context, Slot slot, int x, int y, CallbackInfo ci) {
-		if (slot == null || !slot.hasStack() || !ScreenManager.getInstance().isCurrent(BazaarScreens.ORDERS_PAGE)) {
-			return;
-		}
+	private void drawOnItem_OrderStatusHighlight(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+		if (slot == null || !slot.hasStack() || !ScreenManager.getInstance().isCurrent(BazaarScreens.ORDERS_PAGE)) return;
 
-		if (MinecraftClient.getInstance().player != null && slot.inventory == MinecraftClient.getInstance().player.getInventory()) {
-			return;
-		}
+		if (MinecraftClient.getInstance().player != null && slot.inventory == MinecraftClient.getInstance().player.getInventory()) return;
 
 		if (BazaarUtilsModules.OrderStatusHighlight.isEnabled() && SlotHighlightCache.orderStatusHighlightCache.containsKey(slot.getIndex())) {
-			draw(context, x, y, SlotHighlightCache.orderStatusHighlightCache.get(slot.getIndex()));
+			draw(context, slot.x, slot.y, SlotHighlightCache.orderStatusHighlightCache.get(slot.getIndex()));
+		}
+	}
+
+
+	@Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/item/ItemStack;III)V"))
+	private void drawOnItem_InstaSellHighlight(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+		if (slot == null || !slot.hasStack() || !ScreenManager.getInstance().isCurrent(BazaarScreens.MAIN_PAGE)) return;
+
+		if (MinecraftClient.getInstance().player == null || !(slot.inventory == MinecraftClient.getInstance().player.getInventory())) return;
+
+		if (BazaarUtilsModules.InstantSellHighlight.isEnabled() && SlotHighlightCache.instaSellHighlightCache.containsKey(slot.getIndex())) {
+			draw(context, slot.x, slot.y, SlotHighlightCache.instaSellHighlightCache.get(slot.getIndex()));
 		}
 	}
 
 	@Inject(method = "drawSlot", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/DrawContext;drawItem(Lnet/minecraft/item/ItemStack;III)V"))
-	private void drawOnItem_InstaSellHighlight(DrawContext context, Slot slot, int x, int y, CallbackInfo ci) {
-		if (slot == null || !slot.hasStack() || !ScreenManager.getInstance().isCurrent(BazaarScreens.MAIN_PAGE)) {
-			return;
-		}
+	private void drawOnItem_LastVisitedPages(DrawContext context, Slot slot, int mouseX, int mouseY, CallbackInfo ci) {
+		if (slot == null || !slot.hasStack()) return;
+		if (!BazaarUtilsModules.LastVisitedPages.isSubmapActive()) return;
+		if (MinecraftClient.getInstance().player == null
+				|| !(slot.inventory == MinecraftClient.getInstance().player.getInventory())) return;
 
-		if (MinecraftClient.getInstance().player != null && !(slot.inventory == MinecraftClient.getInstance().player.getInventory())) {
-			return;
-		}
-
-		if (BazaarUtilsModules.InstantSellHighlight.isEnabled() && SlotHighlightCache.instaSellHighlightCache.containsKey(slot.getIndex())) {
-			draw(context, x, y, SlotHighlightCache.instaSellHighlightCache.get(slot.getIndex()));
-		}
+		List<OrderInfo> pages = LastVisitedPages.pages();
+		BazaarDataManager.findProductIdOptional(slot.getStack().getName().getString())
+				.flatMap(productId -> {
+					for (int i = 0; i < pages.size(); i++) {
+						if (productId.equals(pages.get(i).getProductID())) return Optional.of(i);
+					}
+					return Optional.empty();
+				})
+				.ifPresent(index -> {
+					String label = (index == 9) ? "0" : String.valueOf(index + 1);
+ 					context.fill(slot.x, slot.y, slot.x + 7, slot.y + 7, 0xBB000000);
+					context.drawText(textRenderer, label, slot.x + 1, slot.y + 1, 0xFFFFE040, true);
+				});
 	}
 
 	@Unique

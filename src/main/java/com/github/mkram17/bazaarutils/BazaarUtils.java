@@ -77,7 +77,6 @@ public class BazaarUtils implements ClientModInitializer {
                 Identifier.of(BazaarUtils.MOD_ID, "custom_size"),
                 ComponentType.<String>builder().codec(Codec.STRING).build()
         );
-
         CUSTOM_SHOWPRICECHART_COMPONENT = Registry.register(
                 Registries.DATA_COMPONENT_TYPE,
                 Identifier.of(BazaarUtils.MOD_ID, "has_price_chart"),

@@ -8,7 +8,9 @@ import com.github.mkram17.bazaarutils.events.ReplaceItemEvent;
 import com.github.mkram17.bazaarutils.events.SlotClickEvent;
 import com.github.mkram17.bazaarutils.events.listener.BUListener;
 import com.github.mkram17.bazaarutils.misc.BUCompatibilityHelper;
+import com.github.mkram17.bazaarutils.utils.bazaar.data.BazaarDataManager;
 import com.github.mkram17.bazaarutils.utils.bazaar.gui.BazaarScreens;
+import com.github.mkram17.bazaarutils.utils.bazaar.gui.BazaarSlots;
 import com.github.mkram17.bazaarutils.utils.bazaar.market.order.OrderInfo;
 import com.github.mkram17.bazaarutils.utils.bazaar.market.order.OrderType;
 import com.github.mkram17.bazaarutils.utils.annotations.autoregistration.RegisterWidget;
@@ -19,6 +21,7 @@ import com.github.mkram17.bazaarutils.ui.widgets.ItemSlotButtonWidget;
 import com.github.mkram17.bazaarutils.utils.*;
 import com.github.mkram17.bazaarutils.utils.annotations.modules.Module;
 import com.github.mkram17.bazaarutils.utils.bazaar.market.price.PricingPosition;
+import com.github.mkram17.bazaarutils.utils.minecraft.SlotLookup;
 import com.github.mkram17.bazaarutils.utils.minecraft.gui.ScreenManager;
 import com.github.mkram17.bazaarutils.utils.minecraft.gui.container.ContainerManager;
 import com.github.mkram17.bazaarutils.utils.minecraft.gui.sign.SignManager;
@@ -29,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ButtonTextures;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -299,6 +303,14 @@ public class Bookmarks extends BUListener implements ItemButton, BUToggleableFea
         }
 
         return nameFromContainer;
+    }
+
+    public static Optional<OrderInfo> resolveOrderInfoFromScreen() {
+        return ScreenManager.getInstance()
+                .current()
+                .flatMap(screen -> screen.as(GenericContainerScreen.class))
+                .map(inv -> SlotLookup.getInventoryItem(inv.getScreenHandler().getInventory(), BazaarSlots.ITEM_PAGE.ITEM_DISPLAY.slot))
+                .map(item -> new OrderInfo(item.getName().getString(), OrderType.SELL, null, null, null, null));
     }
 
     private static String findItemNameFromItemStacks(List<ItemStack> itemStacks, String nameFromContainer) {

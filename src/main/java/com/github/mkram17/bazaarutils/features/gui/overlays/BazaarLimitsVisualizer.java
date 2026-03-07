@@ -5,8 +5,10 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import com.github.mkram17.bazaarutils.config.BUConfig;
 import com.github.mkram17.bazaarutils.config.features.gui.OverlaysConfig;
 import com.github.mkram17.bazaarutils.data.BazaarLimitsStorage;
+import com.github.mkram17.bazaarutils.data.UserOrdersStorage;
 import com.github.mkram17.bazaarutils.events.listener.BUListener;
 import com.github.mkram17.bazaarutils.generated.BazaarUtilsModules;
 import com.github.mkram17.bazaarutils.misc.BUCompatibilityHelper;
@@ -105,7 +107,7 @@ public class BazaarLimitsVisualizer extends BUListener implements BUToggleableFe
     private static final int TEXT_HEIGHT = 8;
     private static final int LINE_GAP = 4;
     private static final int OVERLAY_WIDTH = 116;
-    private static final int OVERLAY_HEIGHT = TEXT_HEIGHT * 2 + LINE_GAP;
+    private static final int OVERLAY_HEIGHT = TEXT_HEIGHT * 3 + LINE_GAP * 2; // update from *2+*1
 
     @RegisterWidget
     public static List<TextDisplayWidget> getWidget() {
@@ -113,14 +115,14 @@ public class BazaarLimitsVisualizer extends BUListener implements BUToggleableFe
             return Collections.emptyList();
         }
 
-        if (!(MinecraftClient.getInstance().currentScreen instanceof AccessorHandledScreen screen) || !ScreenManager.getInstance().isCurrent(BazaarScreens.MAIN_PAGE)) {
+        if (!(MinecraftClient.getInstance().currentScreen instanceof AccessorHandledScreen screen) || !ScreenManager.getInstance().isCurrent(BazaarScreens.ALL.toArray(ScreenType[]::new))) {
             return Collections.emptyList();
         }
 
         String screenTitle = MinecraftClient.getInstance().currentScreen.getTitle().getString();
         ItemSlotButtonWidget.ScreenWidgetDimensions dimensions = ItemSlotButtonWidget.getSafeScreenDimensions(screen, screenTitle);
 
-        return List.of(createLimitWidget(dimensions), createTimeUntilResetWidget(dimensions));
+        return List.of(createLimitWidget(dimensions), createOrderCountWidget(dimensions), createTimeUntilResetWidget(dimensions));
     }
 
     private static TextDisplayWidget createLimitWidget(ItemSlotButtonWidget.ScreenWidgetDimensions dimensions) {
@@ -139,6 +141,24 @@ public class BazaarLimitsVisualizer extends BUListener implements BUToggleableFe
         int y = dimensions.y() - spacing - OVERLAY_HEIGHT;
 
         return new TextDisplayWidget(x, y, OVERLAY_WIDTH, TEXT_HEIGHT, message, TextDisplayWidget.Alignment.LEFT);
+    }
+
+    private static TextDisplayWidget createOrderCountWidget(ItemSlotButtonWidget.ScreenWidgetDimensions dimensions) {
+        int currentOrders = UserOrdersStorage.INSTANCE.get().size();
+        int maxOrders = BUConfig.USER_BAZAAR_FLIPPER_ACCOUNT_UPGRADE.getMaxBazaarOrders();
+
+        Formatting color = (currentOrders >= maxOrders) ? Formatting.RED : Formatting.GREEN;
+
+        Text text = Text.literal("Orders: ").formatted(Formatting.GOLD)
+                .append(Text.literal(String.valueOf(currentOrders)).formatted(color))
+                .append(Text.literal(" / " + maxOrders).formatted(Formatting.GRAY));
+
+        int spacing = BUCompatibilityHelper.isSkyblockerLoaded() ? 26 : 5;
+
+        int x = dimensions.x();
+        int y = dimensions.y() - spacing - OVERLAY_HEIGHT + (TEXT_HEIGHT + LINE_GAP) * 2;
+
+        return new TextDisplayWidget(x, y, OVERLAY_WIDTH, TEXT_HEIGHT, text, TextDisplayWidget.Alignment.LEFT);
     }
 
     private static TextDisplayWidget createTimeUntilResetWidget(ItemSlotButtonWidget.ScreenWidgetDimensions dimensions) {

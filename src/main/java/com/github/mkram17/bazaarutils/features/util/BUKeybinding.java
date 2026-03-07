@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 
 public abstract class BUKeybinding {
-    protected final KeyBinding keyBinding;
+    public final KeyBinding keyBinding;
 
     public BUKeybinding(KeyBinding keyBinding) {
         this.keyBinding = keyBinding;
