@@ -16,6 +16,14 @@ public class SlotLookup {
         return getInventoryItem(inventory, slot.resolve(inventory));
     }
 
+    public static ItemInfo getInventoryItemInfo(Inventory inventory, int chestSlot) {
+        return new ItemInfo(chestSlot, inventory.getStack(chestSlot));
+    }
+
+    public static ItemInfo getInventoryItemInfo(Inventory inventory, BazaarSlots.BazaarSlot slot) {
+        return getInventoryItemInfo(inventory, slot.resolve(inventory));
+    }
+
     public static Optional<Integer> getInventorySlotFromItemStack(Inventory inventory, ItemStack wanted) {
         for (int i = 0; i < inventory.size() - 1; i++) {
             ItemStack item = inventory.getStack(i);

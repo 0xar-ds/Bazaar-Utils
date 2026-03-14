@@ -3,6 +3,7 @@ package com.github.mkram17.bazaarutils.features.notification;
 import com.github.mkram17.bazaarutils.config.features.notification.NotificationsConfig;
 import com.github.mkram17.bazaarutils.data.UserOrdersStorage;
 import com.github.mkram17.bazaarutils.utils.annotations.modules.Module;
+import com.github.mkram17.bazaarutils.utils.bazaar.market.order.TrackedPlayerOrder;
 import com.github.mkram17.bazaarutils.utils.config.BUToggleableFeature;
 import com.github.mkram17.bazaarutils.utils.bazaar.market.order.Order;
 import com.github.mkram17.bazaarutils.utils.bazaar.market.order.OrderStatus;
@@ -49,5 +50,27 @@ public class OutbidOrderHandler implements BUToggleableFeature {
                 .stream()
                 .filter(order -> order.getPricingPosition() == PricingPosition.OUTBID && order.getStatus() != OrderStatus.FILLED)
                 .toList();
+    }
+
+    public static MutableText getOutbidMessageForTracked(TrackedPlayerOrder order) {
+        return createYourOrderForTrackedText(order)
+                .append(Text.literal(" is now outdated.").formatted(Formatting.WHITE))
+                .append(Text.literal(" Click to open bazaar orders").formatted(Formatting.GOLD));
+    }
+
+    public static MutableText getCompetitiveMessageForTracked(TrackedPlayerOrder order) {
+        return createYourOrderForTrackedText(order)
+                .append(Text.literal(" is no longer outdated.").formatted(Formatting.DARK_PURPLE));
+    }
+
+    public static MutableText getMatchedMessageForTracked(TrackedPlayerOrder order) {
+        return createYourOrderForTrackedText(order)
+                .append(Text.literal(" has been matched.").formatted(Formatting.YELLOW));
+    }
+
+    private static MutableText createYourOrderForTrackedText(TrackedPlayerOrder order) {
+        return Text.literal("Your " + order.side().getString().toLowerCase() + " order for ").formatted(Formatting.WHITE)
+                .append(Text.literal(order.originalAmount() + " ").formatted(Formatting.DARK_PURPLE))
+                .append(Text.literal(order.productId()).formatted(Formatting.GOLD));
     }
 }

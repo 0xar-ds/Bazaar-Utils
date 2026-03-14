@@ -25,6 +25,38 @@ public final class BazaarScreenHandler {
 
     private BazaarScreenHandler() {}
 
+    public static Optional<ItemInfo> getCreateBuyOrderItem(@NotNull ScreenContext context) {
+        if (!context.isAnyOf(BazaarScreens.ITEM_PAGE)) return Optional.empty();
+
+        return getItemFromSlot(context, BazaarSlots.ITEM_PAGE.CREATE_BUY_ORDER.slot);
+    }
+
+    public static Optional<ItemInfo> getCreateSellOfferItem(@NotNull ScreenContext context) {
+        if (!context.isAnyOf(BazaarScreens.ITEM_PAGE)) return Optional.empty();
+
+        return getItemFromSlot(context, BazaarSlots.ITEM_PAGE.CREATE_SELL_OFFER.slot);
+    }
+
+    public static Optional<ItemInfo> getCustomPriceItem(@NotNull ScreenContext context) {
+        if (context.isAnyOf(BazaarScreens.BUY_ORDER_PRICE))
+            return getItemFromSlot(context, BazaarSlots.BUY_ORDER.INPUT_CUSTOM_PRICE.slot);
+
+        if (context.isAnyOf(BazaarScreens.SELL_ORDER_PRICE))
+            return getItemFromSlot(context, BazaarSlots.SELL_OFFER.INPUT_CUSTOM_PRICE.slot);
+
+        return Optional.empty();
+    }
+
+    public static Optional<ItemInfo> getManageOrdersItem(@NotNull ScreenContext context) {
+        if (context.isAnyOf(BazaarScreens.ITEM_PAGE))
+            return getItemFromSlot(context, BazaarSlots.ITEM_PAGE.MANAGE_ORDERS.slot);
+
+        if (context.isAnyOf(BazaarScreens.ITEMS_GROUP_PAGE))
+            return getItemFromSlot(context, BazaarSlots.ITEMS_GROUP_PAGE.MANAGE_ORDERS.slot);
+
+        return Optional.empty();
+    }
+
     public static Optional<ItemInfo> getDisplayItem(@NotNull ScreenContext context) {
         // #isAnyOf rather than #matches — likely to hit computation cache from the
         // preceding isCurrent call in the same stack.
@@ -79,6 +111,12 @@ public final class BazaarScreenHandler {
             }
         }
         return "???";
+    }
+
+
+    private static Optional<ItemInfo> getItemFromSlot(@NotNull ScreenContext context, BazaarSlots.BazaarSlot slot) {
+        return context.as(GenericContainerScreen.class)
+                .map(screen -> SlotLookup.getInventoryItemInfo(screen.getScreenHandler().getInventory(), slot));
     }
 
     public static Optional<Double> findOptionAmount(ItemStack option) {

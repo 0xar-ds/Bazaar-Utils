@@ -69,6 +69,14 @@ public class BazaarSlots {
                 )
         ),
 
+        MANAGE_ORDERS(new BazaarSlot(
+                new SlotLookup.IndexReference.FixedIndex(32),
+                (query) -> query
+                        .itemType(Items.BOOK)
+                        .withCustomName("Manage Orders")
+                )
+        ),
+
         VIEW_GRAPHS(new BazaarSlot(
                 new SlotLookup.IndexReference.FixedIndex(33),
                 (query) -> query
@@ -92,6 +100,14 @@ public class BazaarSlots {
                         .itemType(Items.IRON_ORE, Items.GOLD_ORE)
                         .withCustomName("Advanced Mode", "Direct Mode")
                         .withLore("Click to toggle view!")
+                )
+        ),
+
+        MANAGE_ORDERS(new BazaarSlot(
+                new SlotLookup.IndexReference.ContainerSizeNegativeOffset(3),
+                (query) -> query
+                        .itemType(Items.BOOK)
+                        .withCustomName("Manage Orders")
                 )
         );
 
