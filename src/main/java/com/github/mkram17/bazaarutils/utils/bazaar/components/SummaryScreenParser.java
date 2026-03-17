@@ -19,7 +19,7 @@ public final class SummaryScreenParser {
         return new SummaryResult(parsePriceLevels(buyOrderStack), parsePriceLevels(sellOfferStack));
     }
 
-    public static List<PriceLevelPool> parsePriceLevels(ItemStack stack) {
+    private static List<PriceLevelPool> parsePriceLevels(ItemStack stack) {
         long now = System.currentTimeMillis();
         var lines = LoreParser.lines(stack);
 

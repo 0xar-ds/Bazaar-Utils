@@ -34,8 +34,6 @@ public class BazaarScreensHandler extends BUListener {
         ScreenManager.getInstance().current().ifPresent(context -> {
             if (context.isAnyOf(BazaarScreens.ITEM_PAGE)) {
                 handleItemPage(context);
-            } else if (context.isAnyOf(BazaarScreens.BUY_ORDER_PRICE, BazaarScreens.SELL_ORDER_PRICE)) {
-                handlePricePage(context);
             } else if (context.isAnyOf(BazaarScreens.ORDERS_PAGE)) {
                 handleOrdersPage(context);
             } else if (context.isAnyOf(BazaarScreens.ITEMS_GROUP_PAGE)) {
@@ -71,30 +69,6 @@ public class BazaarScreensHandler extends BUListener {
                 BazaarProductRegistry.notifyManageOrdersGroupPage(parsed.hints(), parsed.observedAt());
             }
         });
-    }
-
-    private static void handlePricePage(ScreenContext context) {
-        Optional<String> productId = ScreenManager.getInstance()
-                .findBack(BazaarScreens.ITEM_PAGE)
-                .flatMap(BazaarScreenHandler::getDisplayProductId);
-
-        PlayerActionUtil.notifyAll("[BazaarScreensHandler] PRICE_PAGE productId=" + productId, NotificationType.BAZAARDATA);
-        if (productId.isEmpty()) return;
-
-        Optional<ItemStack> signStack = BazaarScreenHandler.getCustomPriceItem(context).map(ItemInfo::itemStack);
-        PlayerActionUtil.notifyAll("[BazaarScreensHandler] PRICE_PAGE signStack=" + signStack.isPresent(), NotificationType.BAZAARDATA);
-        if (signStack.isEmpty()) return;
-
-        List<PriceLevelPool> levels = SummaryScreenParser.parsePriceLevels(signStack.get());
-        PlayerActionUtil.notifyAll("[BazaarScreensHandler] PRICE_PAGE parsed levels=" + levels.size(), NotificationType.BAZAARDATA);
-        if (levels.isEmpty()) return;
-
-        boolean isBuy = context.isAnyOf(BazaarScreens.BUY_ORDER_PRICE);
-
-        BazaarProductRegistry.notifyBookScreen(
-                productId.get(),
-                isBuy ? List.of() : levels,
-                isBuy ? levels : List.of());
     }
 
     private static void handleOrdersPage(ScreenContext ctx) {

@@ -37,16 +37,6 @@ public final class BazaarScreenHandler {
         return getItemFromSlot(context, BazaarSlots.ITEM_PAGE.CREATE_SELL_OFFER.slot);
     }
 
-    public static Optional<ItemInfo> getCustomPriceItem(@NotNull ScreenContext context) {
-        if (context.isAnyOf(BazaarScreens.BUY_ORDER_PRICE))
-            return getItemFromSlot(context, BazaarSlots.BUY_ORDER.INPUT_CUSTOM_PRICE.slot);
-
-        if (context.isAnyOf(BazaarScreens.SELL_ORDER_PRICE))
-            return getItemFromSlot(context, BazaarSlots.SELL_OFFER.INPUT_CUSTOM_PRICE.slot);
-
-        return Optional.empty();
-    }
-
     public static Optional<ItemInfo> getManageOrdersItem(@NotNull ScreenContext context) {
         if (context.isAnyOf(BazaarScreens.ITEM_PAGE))
             return getItemFromSlot(context, BazaarSlots.ITEM_PAGE.MANAGE_ORDERS.slot);

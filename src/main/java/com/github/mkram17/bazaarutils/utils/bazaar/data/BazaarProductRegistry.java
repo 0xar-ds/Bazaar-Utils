@@ -43,7 +43,7 @@ public final class BazaarProductRegistry {
     public static TrackedPlayerOrder notifyPlacement(String productId, TransactionType.Side side, double price, int amount) {
         price = Util.truncateNum(price);
         long now = System.currentTimeMillis();
-        
+
         var data = getOrCreate(productId);
 
         var order = new TrackedPlayerOrder(
